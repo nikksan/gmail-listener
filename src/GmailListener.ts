@@ -2,6 +2,9 @@ import { google, gmail_v1 } from 'googleapis';
 import { EventEmitter } from 'events';
 
 type Credentials = {
+  clientId: string,
+  clientSecret: string,
+  redirectUri: string,
   accessToken: string,
   refreshToken: string,
   scope: string,
@@ -15,9 +18,6 @@ type Message = {
 }
 
 class GmailListener extends EventEmitter {
-  private clientId: string;
-  private clientSecret: string;
-  private redirectUri: string;
   private credentials: Credentials;
   private pollInterval: number;
   private gmail: gmail_v1.Gmail;
@@ -25,17 +25,11 @@ class GmailListener extends EventEmitter {
   private lastMessageId: string | null;
 
   constructor(
-    clientId: string,
-    clientSecret: string,
-    redirectUri: string,
     credentials: Credentials,
     pollInterval = 1000,
   ) {
     super();
 
-    this.clientId = clientId;
-    this.clientSecret = clientSecret;
-    this.redirectUri = redirectUri;
     this.credentials = credentials;
     this.pollInterval = pollInterval;
     this.hasFetchedTheLastMessage = false;
@@ -47,9 +41,9 @@ class GmailListener extends EventEmitter {
 
   private setupGmailClient() {
     const oAuth2Client = new google.auth.OAuth2(
-      this.clientId,
-      this.clientSecret,
-      this.redirectUri,
+      this.credentials.clientId,
+      this.credentials.clientSecret,
+      this.credentials.redirectUri,
     );
 
     oAuth2Client.setCredentials({
@@ -65,7 +59,6 @@ class GmailListener extends EventEmitter {
   private async listenForNewMessages() {
     try {
       const messageId = await this.getLastMessageId();
-      console.log(messageId);
       if (this.hasFetchedTheLastMessage && messageId && messageId !== this.lastMessageId) {
         const message = await this.getMessage(messageId);
         this.emit('message', message);

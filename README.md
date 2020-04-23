@@ -3,10 +3,10 @@ A client providing an EventEmitter-like interface for new emails from GMAIL
 
 ```javascript
 const gmailListener = new GmailListener(
-  'clientId',
-  'clientSecret',
-  'redirectUri',
   {
+    clientId: 'clientId',
+    clientSecret: 'clientSecret',
+    redirectUri: 'redirectUri',
     accessToken: 'accessToken',
     refreshToken: 'refreshToken',
     scope: 'scope',
