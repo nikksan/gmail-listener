@@ -4,7 +4,7 @@ Gmail Listener is a push client for close to real-time email subscription.
 
 ## Installation
 
-You must firstly generate crendetials.json and then run quick-start script.
+You must first generate the credentials.json file from google and then run the quick-start script. After you generate token.json you can use them to configure the client.
 
 ```bash
 npm run quick-start
