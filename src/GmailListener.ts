@@ -21,7 +21,7 @@ class GmailListener extends EventEmitter {
   private credentials: Credentials;
   private pollInterval: number;
   private gmail: gmail_v1.Gmail;
-  private hasFetchedTheLastMessage: boolean;
+  private isFirstTime: boolean;
   private lastMessageId: string | null;
 
   constructor(
@@ -32,7 +32,7 @@ class GmailListener extends EventEmitter {
 
     this.credentials = credentials;
     this.pollInterval = pollInterval;
-    this.hasFetchedTheLastMessage = false;
+    this.isFirstTime = true;
     this.lastMessageId = null;
 
     this.setupGmailClient();
@@ -59,13 +59,13 @@ class GmailListener extends EventEmitter {
   private async listenForNewMessages() {
     try {
       const messageId = await this.getLastMessageId();
-      if (this.hasFetchedTheLastMessage && messageId && messageId !== this.lastMessageId) {
+      if (!this.isFirstTime && messageId && messageId !== this.lastMessageId) {
         const message = await this.getMessage(messageId);
         this.emit('message', message);
       }
 
       this.lastMessageId = messageId;
-      this.hasFetchedTheLastMessage = true;
+      this.isFirstTime = false;
     } catch (err) {
       this.emit('error', err);
       return;
