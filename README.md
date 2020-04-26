@@ -1,5 +1,18 @@
-# gmail-listener
-A client providing an EventEmitter-like interface for new emails from GMAIL
+# Gmail Listener
+
+Gmail Listener is a push client for close to real-time email subscription.
+
+## Installation
+
+You must firstly generate crendetials.json and then run quick-start script.
+
+```bash
+npm run quick-start
+```
+
+
+## Usage
+
 
 ```javascript
 const gmailListener = new GmailListener(

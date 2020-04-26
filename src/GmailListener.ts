@@ -14,6 +14,7 @@ type Credentials = {
 
 type Message = {
   sender: string;
+  subject: string;
   body: string;
 }
 
@@ -112,15 +113,20 @@ class GmailListener extends EventEmitter {
       throw new Error('Failed to extract the message, no part with text/html mimeType!');
     }
 
-    const fromHeader = payload.headers.find((header) => header.name === 'From');
-    if (!fromHeader) {
-      throw new Error('Missing `From` header!');
-    }
-
     return {
-      sender: fromHeader.value,
+      sender: this.extractSpecificHeader('From', payload.headers),
+      subject: this.extractSpecificHeader('Subject', payload.headers),
       body: this.decodeBase64(part.body.data),
     };
+  }
+
+  private extractSpecificHeader(name: string, headers: Array<gmail_v1.Schema$MessagePartHeader>) {
+    const header = headers.find((header) => header.name === name);
+    if (!header) {
+      throw new Error(`Failed to extract ${name} header!`);
+    }
+
+    return header.value;
   }
 
   private decodeBase64(encodedString: string) {
